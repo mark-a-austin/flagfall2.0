@@ -18,17 +18,19 @@ bool rsw_state[8][8] = { 0 };
 // ====================== CoreXY Configuration ======================
 /* 
 *  CoreXY Layout
-*   .---------.
+*   o=========o
 *   |         |
 *   |         |
 *   |[O]======|
 *  [M1]-----[M2]
 */
-#define HIGH_SPD 1000 
+
+// 1/32 microstepping, 6400 steps per revolution
+#define HIGH_SPD 1000
 #define LOW_SPD  200
 #define CALI_SPD 1500
 #define SPD_TO_INTERVAL(spd) (int) 10000 / spd
-#define MM_TO_STEPS(mm) (long) mm * 161
+#define MM_TO_STEPS(mm) (long) mm * 161 // 161 steps per mm at 1/32 microstepping
 
 #define UP         0
 #define DOWN       1
@@ -49,20 +51,23 @@ typedef struct StepperMotor {
 
 StepperMotor M1 = { 4, 5, 12 }, M2 = { 7, 6, 8 };
 
-// Stepper Motor State
+// Position relative to the bottom left corner of the board in mm
 typedef struct Position {
     int x;
     int y;
 } Position;
-
+// Global variable to store the current position
 Position current_pos = { -1, -1 };
+// Max and Min Position can be reached to protect the motor
 const int MAX_X = 500;
 const int MAX_Y = 560;
 const int MIN_X = 0;
 const int MIN_Y = 0;
-const int OFFSET_X = 8;
+// Offset: Distance in mm from the botton left corner 
+// of the board to the calibration point
+const int OFFSET_X = 8; 
 const int OFFSET_Y = 35;
-
+// Position on the 8x8 chess board
 typedef struct BoardPosition {
     float x;
     float y;
@@ -97,10 +102,14 @@ void setup() {
 uint8_t buffer[512];
 
 // void loop() {
-//     // serial_input_demo();
-//     rsw_LED_demo();
+//     serial_input_demo();
+//     // rsw_LED_demo();
 // }
 
+/*
+* The main loop running on the arduino
+* It receive operation from serial
+*/
 void loop() {
     if (Serial.available()) {
         size_t read_amnt = Serial.readBytes(buffer, 512);
@@ -112,6 +121,8 @@ void loop() {
             rsw_state_update();
             uint64_t rsw_data;
             uint64_t prev_rsw_data = rsw_state_to_uint64();
+
+            // uint64_t original_rsw_data = rsw_state_to_uint64();; // Record the original reading
 
             bool change_registered = false;
 
@@ -154,9 +165,6 @@ void loop() {
                 bool magnet = (*curr_ptr) != 0;
                 curr_ptr += 1;
 
-                // Serial.println(x);
-                // Serial.println(y);
-                // Serial.println(magnet);
                 if (magnet) {
                     magnet_on();
                 } else {
@@ -174,6 +182,7 @@ void loop() {
             write_ack();
 
         } else if (op.kind == OpKind::Led) {
+            // write_ack();
             size_t row = 1; 
             size_t col = 1;
             for (auto data_ptr = op.data; data_ptr < op.data + op.data_len(); data_ptr += 3) {
@@ -192,8 +201,6 @@ void loop() {
             write_ack();
         }
     }
-    // rsw_LED_demo();
-    // serial_input_demo();
 }
 
 
@@ -204,6 +211,15 @@ CRGB bytes_to_crgb(const uint8_t* base) {
 size_t write_sensor_data(const uint64_t &value) {
     Serial.write((uint8_t *) &value, sizeof(value));
 }
+
+uint8_t msb(uint64_t num) {
+    uint8_t msb = 0;
+    while (num >>= 1) {
+        msb++;
+    }
+    return msb;
+}
+
 
 // ====================== General Helper Functions ======================
 
@@ -732,6 +748,7 @@ void magnet_on() {
     int sensorValue = analogRead(MAGNET_READ_PIN);
     int outputValue = map(sensorValue, 0, 1023, 0 , 255);
     analogWrite(ELECTROMAGNET_PIN, outputValue);
+    delay(200); // Wait 0.2s to make sure the magnet is on
 }
 
 /*
