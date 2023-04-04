@@ -1,0 +1,6 @@
+[submodule "serial-communicator"]
+	path = serial-communicator
+	url = https://github.com/rubberhead/serial-communicator
+[submodule "opponent-wrapper"]
+	path = opponent-wrapper
+	url = https://github.com/cosmobobak/opponent-wrapper

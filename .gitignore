@@ -1,0 +1,13 @@
+# OS/editor tmps
+.vscode/
+.DS_Store
+
+# Rust
+/target
+engines/viridithas.exe
+engines/viridithas
+engines/lc0.exe
+engines/lc0
+
+# Python
+venv/
