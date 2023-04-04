@@ -1,8 +1,12 @@
+import random
+import sys
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import pygame_gui
 from pygame_gui.core import ObjectID
-import chess.svg
-from cairosvg import svg2png
+# import chess.svg
+# from cairosvg import svg2png
 
 pygame.init()
 
@@ -14,7 +18,7 @@ screen = pygame.display.set_mode(window_size)
 
 # Set up the UI manager
 manager = pygame_gui.UIManager(window_size, "theme.json")
-#manager.get_theme().load_theme("button.json")
+# manager.get_theme().load_theme("button.json")
 background = pygame.Surface(window_size)
 
 # Set up buttons for selecting game mode
@@ -25,7 +29,7 @@ start_button = pygame_gui.elements.UIButton(
     anchors={'bottom': 'bottom',
              'right': 'right',
              'left': 'left'},
-            object_id=ObjectID(class_id='@small_buttons')
+    object_id=ObjectID(class_id='@small_buttons')
 )
 
 logo = pygame.image.load("Icons/logo.png")
@@ -39,7 +43,7 @@ file = open("lichessToken.txt", "r")
 lichessToken = file.read()
 image = None
 
-#set up buttons and stuff
+# set up buttons and stuff
 player_vs_player_button = None
 player_vs_engine_button = None
 maia_button = None
@@ -47,6 +51,7 @@ viridithas_button = None
 white_button = None
 black_button = None
 random_button = None
+colour_back = None
 begin_button = None
 cancel_button = None
 cancel_button_player = None
@@ -56,6 +61,21 @@ wrongID_label = None
 local_button = None
 confirmSettings_button = None
 settings_button = None
+tutorial_content1 = None
+tutorial_content2 = None
+tutorial_content3 = None
+tutorial_continue1 = None
+tutorial_continue2 = None
+tutorial_back2 = None
+tutorial_continue3 = None
+tutorial_back3 = None
+tutorial_skip = None
+tutorial_back = None
+
+
+# output
+engine = None
+colour = None
 
 
 # Set up the clock for managing time
@@ -77,36 +97,36 @@ while True:
                 start_button.kill()
                 start_button = None
                 player_vs_player_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, 0), (width/2, height/2)),
+                    relative_rect=pygame.Rect((0, 0), (width / 2, height / 2)),
                     text='Player vs Player',
                     manager=manager,
                     anchors={'left': 'left',
                              'top': 'top'},
-                    object_id= ObjectID(object_id='#pvp_button')
+                    object_id=ObjectID(object_id='#pvp_button')
                 )
                 player_vs_engine_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((-width/2, 0), (width/2, height/2)),
+                    relative_rect=pygame.Rect((-width / 2, 0), (width / 2, height / 2)),
                     text='Player vs Engine',
                     manager=manager,
                     anchors={'right': 'right',
                              'top': 'top'},
-                    object_id= ObjectID(object_id='#pve_button')
+                    object_id=ObjectID(object_id='#pve_button')
                 )
                 local_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, -height/2), (width/2, height/2)),
+                    relative_rect=pygame.Rect((0, -height / 2), (width / 2, height / 2)),
                     text='Local game',
                     manager=manager,
                     anchors={'left': 'left',
                              'bottom': 'bottom'},
-                    object_id= ObjectID(object_id='#local_button')
+                    object_id=ObjectID(object_id='#local_button')
                 )
                 settings_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((-width/2, -height/2), (width/2, height/2)),
+                    relative_rect=pygame.Rect((-width / 2, -height / 2), (width / 2, height / 2)),
                     text='Settings',
                     manager=manager,
                     anchors={'right': 'right',
                              'bottom': 'bottom'},
-                    object_id= ObjectID(object_id='#settings_button')
+                    object_id=ObjectID(object_id='#settings_button')
                 )
             elif event.ui_element == player_vs_player_button:
                 # Handle player vs engine mode
@@ -120,7 +140,7 @@ while True:
                 settings_button = None
                 gamemode = "lichess"
                 OpponentID_EntryLine = pygame_gui.elements.UITextEntryLine(
-                    relative_rect=pygame.Rect((0, -50), (width -100, 100)),
+                    relative_rect=pygame.Rect((0, -50), (width - 100, 100)),
                     placeholder_text="Opponent ID",
                     manager=manager,
                     anchors={'center': 'center'}
@@ -154,45 +174,45 @@ while True:
                     wrongID_label.kill()
                     wrongID_label = None
                 player_vs_player_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, 0), (width/2, height/2)),
+                    relative_rect=pygame.Rect((0, 0), (width / 2, height / 2)),
                     text='Player vs Player',
                     manager=manager,
                     anchors={'left': 'left',
                              'top': 'top'},
-                    object_id= ObjectID(object_id='#pvp_button')
+                    object_id=ObjectID(object_id='#pvp_button')
                 )
                 player_vs_engine_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((-width/2, 0), (width/2, height/2)),
+                    relative_rect=pygame.Rect((-width / 2, 0), (width / 2, height / 2)),
                     text='Player vs Engine',
                     manager=manager,
                     anchors={'right': 'right',
                              'top': 'top'},
-                    object_id= ObjectID(object_id='#pve_button')
+                    object_id=ObjectID(object_id='#pve_button')
                 )
                 local_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, -height/2), (width/2, height/2)),
+                    relative_rect=pygame.Rect((0, -height / 2), (width / 2, height / 2)),
                     text='Local game',
                     manager=manager,
                     anchors={'left': 'left',
                              'bottom': 'bottom'},
-                    object_id= ObjectID(object_id='#local_button')
+                    object_id=ObjectID(object_id='#local_button')
                 )
                 settings_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((-width/2, -height/2), (width/2, height/2)),
+                    relative_rect=pygame.Rect((-width / 2, -height / 2), (width / 2, height / 2)),
                     text='Settings',
                     manager=manager,
                     anchors={'right': 'right',
                              'bottom': 'bottom'},
-                    object_id= ObjectID(object_id='#settings_button')
+                    object_id=ObjectID(object_id='#settings_button')
                 )
             elif event.ui_element == confirmID_button:
                 if OpponentID_EntryLine.get_text() == "":
                     wrongID_label = pygame_gui.elements.UILabel(
-                    relative_rect=pygame.Rect((0, 50), (300, 100)),
-                    text="Please enter a valid opponent ID",
-                    manager=manager,
-                    anchors={'center': 'center'}
-                )
+                        relative_rect=pygame.Rect((0, 50), (300, 100)),
+                        text="Please enter a valid opponent ID",
+                        manager=manager,
+                        anchors={'center': 'center'}
+                    )
                 else:
                     opponentID = OpponentID_EntryLine.get_text()
                     OpponentID_EntryLine.kill()
@@ -201,35 +221,35 @@ while True:
                     confirmID_button = None
                     cancel_button_player.kill()
                     cancel_button_player = None
-                    if(wrongID_label != None):
+                    if (wrongID_label != None):
                         wrongID_label.kill()
                         wrongID_label = None
                     white_button = pygame_gui.elements.UIButton(
-                        relative_rect=pygame.Rect((0, 0), (width/3, height)),
+                        relative_rect=pygame.Rect((0, 0), (width / 3, height)),
                         text='White',
                         manager=manager,
                         anchors={'left': 'left',
-                                'top': 'top',
-                                'bottom': 'bottom'},
-                    object_id= ObjectID(object_id='#white_button')
+                                 'top': 'top',
+                                 'bottom': 'bottom'},
+                        object_id=ObjectID(object_id='#white_button')
                     )
                     black_button = pygame_gui.elements.UIButton(
-                        relative_rect=pygame.Rect((-width/3,0), (width/3, height)),
+                        relative_rect=pygame.Rect((-width / 3, 0), (width / 3, height)),
                         text='Black',
                         manager=manager,
                         anchors={'right': 'right',
-                                'top': 'top',
-                                'bottom': 'bottom'},
-                    object_id= ObjectID(object_id='#black_button')
+                                 'top': 'top',
+                                 'bottom': 'bottom'},
+                        object_id=ObjectID(object_id='#black_button')
                     )
                     random_button = pygame_gui.elements.UIButton(
-                        relative_rect=pygame.Rect((0, 0), (width/3, height)),
+                        relative_rect=pygame.Rect((0, 0), (width / 3, height)),
                         text='Random',
                         manager=manager,
                         anchors={'center': 'center',
-                                'top': 'top',
-                                'bottom': 'bottom'},
-                    object_id= ObjectID(object_id='#random_button')
+                                 'top': 'top',
+                                 'bottom': 'bottom'},
+                        object_id=ObjectID(object_id='#random_button')
                     )
             elif event.ui_element == player_vs_engine_button:
                 # Handle player vs engine mode
@@ -243,22 +263,22 @@ while True:
                 settings_button = None
                 gamemode = "engine"
                 viridithas_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, 0), (width/2, height-100)),
+                    relative_rect=pygame.Rect((0, 0), (width / 2, height - 100)),
                     text='Viridithas',
                     manager=manager,
                     anchors={'left': 'left',
                              'top': 'top',
                              'bottom': 'bottom'},
-                    object_id= ObjectID(object_id='#viridithas_button')
+                    object_id=ObjectID(object_id='#viridithas_button')
                 )
                 maia_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((-width/2, 0), (width/2, height-100)),
+                    relative_rect=pygame.Rect((-width / 2, 0), (width / 2, height - 100)),
                     text='Maia',
                     manager=manager,
                     anchors={'right': 'right',
                              'top': 'top',
                              'bottom': 'bottom'},
-                    object_id= ObjectID(object_id='#maia_button')
+                    object_id=ObjectID(object_id='#maia_button')
                 )
                 cancel_button_engine = pygame_gui.elements.UIButton(
                     relative_rect=pygame.Rect((0, -100), (width, 100)),
@@ -277,36 +297,36 @@ while True:
                 cancel_button_engine.kill()
                 cancel_button_engine = None
                 player_vs_player_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, 0), (width/2, height/2)),
+                    relative_rect=pygame.Rect((0, 0), (width / 2, height / 2)),
                     text='Player vs Player',
                     manager=manager,
                     anchors={'left': 'left',
                              'top': 'top'},
-                    object_id= ObjectID(object_id='#pvp_button')
+                    object_id=ObjectID(object_id='#pvp_button')
                 )
                 player_vs_engine_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((-width/2, 0), (width/2, height/2)),
+                    relative_rect=pygame.Rect((-width / 2, 0), (width / 2, height / 2)),
                     text='Player vs Engine',
                     manager=manager,
                     anchors={'right': 'right',
                              'top': 'top'},
-                    object_id= ObjectID(object_id='#pve_button')
+                    object_id=ObjectID(object_id='#pve_button')
                 )
                 local_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, -height/2), (width/2, height/2)),
+                    relative_rect=pygame.Rect((0, -height / 2), (width / 2, height / 2)),
                     text='Local game',
                     manager=manager,
                     anchors={'left': 'left',
                              'bottom': 'bottom'},
-                    object_id= ObjectID(object_id='#local_button')
+                    object_id=ObjectID(object_id='#local_button')
                 )
                 settings_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((-width/2, -height/2), (width/2, height/2)),
+                    relative_rect=pygame.Rect((-width / 2, -height / 2), (width / 2, height / 2)),
                     text='Settings',
                     manager=manager,
                     anchors={'right': 'right',
                              'bottom': 'bottom'},
-                    object_id= ObjectID(object_id='#settings_button')
+                    object_id=ObjectID(object_id='#settings_button')
                 )
             elif event.ui_element == viridithas_button:
                 viridithas_button.kill()
@@ -315,33 +335,34 @@ while True:
                 maia_button = None
                 cancel_button_engine.kill()
                 cancel_button_engine = None
-                engine = "v"
+                engine = "V"
+                # sys.stdout.write(engine)
                 white_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, 0), (width/3, height)),
+                    relative_rect=pygame.Rect((0, 0), (width / 3, height)),
                     text='White',
                     manager=manager,
                     anchors={'left': 'left',
-                            'top': 'top',
-                            'bottom': 'bottom'},
-                object_id= ObjectID(object_id='#white_button')
+                             'top': 'top',
+                             'bottom': 'bottom'},
+                    object_id=ObjectID(object_id='#white_button')
                 )
                 black_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((-width/3,0), (width/3, height)),
+                    relative_rect=pygame.Rect((-width / 3, 0), (width / 3, height)),
                     text='Black',
                     manager=manager,
                     anchors={'right': 'right',
-                            'top': 'top',
-                            'bottom': 'bottom'},
-                object_id= ObjectID(object_id='#black_button')
+                             'top': 'top',
+                             'bottom': 'bottom'},
+                    object_id=ObjectID(object_id='#black_button')
                 )
                 random_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, 0), (width/3, height)),
+                    relative_rect=pygame.Rect((0, 0), (width / 3, height)),
                     text='Random',
                     manager=manager,
                     anchors={'center': 'center',
-                            'top': 'top',
-                            'bottom': 'bottom'},
-                object_id= ObjectID(object_id='#random_button')
+                             'top': 'top',
+                             'bottom': 'bottom'},
+                    object_id=ObjectID(object_id='#random_button')
                 )
             elif event.ui_element == maia_button:
                 viridithas_button.kill()
@@ -350,33 +371,34 @@ while True:
                 maia_button = None
                 cancel_button_engine.kill()
                 cancel_button_engine = None
-                engine = "m"
+                engine = "M"
+                # sys.stdout.write(engine)
                 white_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, 0), (width/3, height)),
+                    relative_rect=pygame.Rect((0, 0), (width / 3, height)),
                     text='White',
                     manager=manager,
                     anchors={'left': 'left',
-                            'top': 'top',
-                            'bottom': 'bottom'},
-                object_id= ObjectID(object_id='#white_button')
+                             'top': 'top',
+                             'bottom': 'bottom'},
+                    object_id=ObjectID(object_id='#white_button')
                 )
                 black_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((-width/3,0), (width/3, height)),
+                    relative_rect=pygame.Rect((-width / 3, 0), (width / 3, height)),
                     text='Black',
                     manager=manager,
                     anchors={'right': 'right',
-                            'top': 'top',
-                            'bottom': 'bottom'},
-                object_id= ObjectID(object_id='#black_button')
+                             'top': 'top',
+                             'bottom': 'bottom'},
+                    object_id=ObjectID(object_id='#black_button')
                 )
                 random_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, 0), (width/3, height)),
+                    relative_rect=pygame.Rect((0, 0), (width / 3, height)),
                     text='Random',
                     manager=manager,
                     anchors={'center': 'center',
-                            'top': 'top',
-                            'bottom': 'bottom'},
-                object_id= ObjectID(object_id='#random_button')
+                             'top': 'top',
+                             'bottom': 'bottom'},
+                    object_id=ObjectID(object_id='#random_button')
                 )
             elif event.ui_element == white_button:
                 white_button.kill()
@@ -386,24 +408,52 @@ while True:
                 random_button.kill()
                 random_button = None
                 colour = "white"
-                begin_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, 0), (width, height-100)),
-                    text='',
+                # sys.stdout.write(colour)
+
+                tutorial_content1 = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect(0, 0, width, height * 4 / 5),
+                    text='tutorial content',
                     manager=manager,
                     anchors={'top': 'top',
                              'right': 'right',
                              'left': 'left'},
-                object_id= ObjectID(object_id='#begin_button')
                 )
-                cancel_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, -100), (width, 100)),
-                    text='Cancel',
+                tutorial_continue1 = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect(0, (height * 4 / 5) + 5, width/2, height * 1 / 5),
+                    text='continue',
                     manager=manager,
-                    anchors={'bottom': 'bottom',
+                    anchors={'top': 'top',
                              'right': 'right',
                              'left': 'left'},
-                    object_id=ObjectID(class_id='@small_buttons')
                 )
+                tutorial_skip = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect(width/2, (height * 4 / 5) + 5, width/2, height * 1 / 5),
+                    text='skip',
+                    manager=manager,
+                    anchors={'top': 'top',
+                             'right': 'right',
+                             'left': 'left'},
+                )
+
+
+                # begin_button = pygame_gui.elements.UIButton(
+                #     relative_rect=pygame.Rect((0, 0), (width, height - 100)),
+                #     text='You are choosing white',
+                #     manager=manager,
+                #     anchors={'top': 'top',
+                #              'right': 'right',
+                #              'left': 'left'},
+                #     object_id=ObjectID(object_id='#begin_button')
+                # )
+                # cancel_button = pygame_gui.elements.UIButton(
+                #     relative_rect=pygame.Rect((0, -100), (width, 100)),
+                #     text='Cancel',
+                #     manager=manager,
+                #     anchors={'bottom': 'bottom',
+                #              'right': 'right',
+                #              'left': 'left'},
+                #     object_id=ObjectID(class_id='@small_buttons')
+                # )
             elif event.ui_element == black_button:
                 white_button.kill()
                 white_button = None
@@ -412,14 +462,131 @@ while True:
                 random_button.kill()
                 random_button = None
                 colour = "black"
-                begin_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, 0), (width, height-100)),
-                    text='',
+                # sys.stdout.write(colour)
+
+                tutorial_content1 = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect(0, 0, width, height * 4 / 5),
+                    text='tutorial content',
                     manager=manager,
                     anchors={'top': 'top',
                              'right': 'right',
                              'left': 'left'},
-                object_id= ObjectID(object_id='#begin_button')
+                )
+                tutorial_continue1 = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect(0, (height * 4 / 5) + 5, width/2, height * 1 / 5),
+                    text='continue',
+                    manager=manager,
+                    anchors={'top': 'top',
+                             'right': 'right',
+                             'left': 'left'},
+                )
+                tutorial_skip = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect(width / 2, (height * 4 / 5) + 5, width / 2, height * 1 / 5),
+                    text='skip',
+                    manager=manager,
+                    anchors={'top': 'top',
+                             'right': 'right',
+                             'left': 'left'},
+                )
+            elif event.ui_element == random_button:
+                white_button.kill()
+                white_button = None
+                black_button.kill()
+                black_button = None
+                random_button.kill()
+                random_button = None
+                # Generate a random number between 0 and 1
+                random_number = random.randint(0, 1)
+                # Output "black" if the random number is 0, otherwise output "white"
+                if random_number == 0:
+                    colour = 'black'
+                else:
+                    colour = 'white'
+                # sys.stdout.write(colour)
+                tutorial_content1 = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect(0, 0, width, height * 4 / 5),
+                    text='tutorial content',
+                    manager=manager,
+                    anchors={'top': 'top',
+                             'right': 'right',
+                             'left': 'left'},
+                )
+                tutorial_continue1 = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect(0, (height * 4 / 5) + 5, width/2, height * 1 / 5),
+                    text='continue',
+                    manager=manager,
+                    anchors={'top': 'top',
+                             'right': 'right',
+                             'left': 'left'},
+                )
+                tutorial_skip = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect(width / 2, (height * 4 / 5) + 5, width / 2, height * 1 / 5),
+                    text='skip',
+                    manager=manager,
+                    anchors={'top': 'top',
+                             'right': 'right',
+                             'left': 'left'},
+                )
+            elif event.ui_element == tutorial_continue1:
+                tutorial_content1.kill()
+                tutorial_content1 = None
+                tutorial_continue1.kill()
+                tutorial_continue1 = None
+                tutorial_skip.kill()
+                tutorial_skip = None
+
+                tutorial_content2 = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect(0, 0, width, height * 4 / 5),
+                    text='tutorial content2',
+                    manager=manager,
+                    anchors={'top': 'top',
+                             'right': 'right',
+                             'left': 'left'},
+                )
+                tutorial_continue2 = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect(0, (height * 4 / 5) + 5, width, height * 1 / 5),
+                    text='continue',
+                    manager=manager,
+                    anchors={'top': 'top',
+                             'right': 'right',
+                             'left': 'left'},
+                )
+
+            elif event.ui_element == tutorial_continue2:
+                tutorial_content2.kill()
+                tutorial_content2 = None
+                tutorial_continue2.kill()
+                tutorial_continue2 = None
+
+                tutorial_content3 = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect(0, 0, width, height * 4 / 5),
+                    text='tutorial content3',
+                    manager=manager,
+                    anchors={'top': 'top',
+                             'right': 'right',
+                             'left': 'left'},
+                )
+                tutorial_continue3 = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect(0, (height * 4 / 5) + 5, width, height * 1 / 5),
+                    text='continue',
+                    manager=manager,
+                    anchors={'top': 'top',
+                             'right': 'right',
+                             'left': 'left'},
+                )
+            elif event.ui_element == tutorial_continue3:
+                tutorial_content3.kill()
+                tutorial_content3 = None
+                tutorial_continue3.kill()
+                tutorial_continue3 = None
+                begin_button = pygame_gui.elements.UIButton(
+                    relative_rect=pygame.Rect((0, 0), (width, height - 100)),
+                    text='You are choosing white',
+                    manager=manager,
+                    anchors={'top': 'top',
+                             'right': 'right',
+                             'left': 'left'},
+                    object_id=ObjectID(object_id='#begin_button')
                 )
                 cancel_button = pygame_gui.elements.UIButton(
                     relative_rect=pygame.Rect((0, -100), (width, 100)),
@@ -430,22 +597,21 @@ while True:
                              'left': 'left'},
                     object_id=ObjectID(class_id='@small_buttons')
                 )
-            elif event.ui_element == random_button:
-                white_button.kill()
-                white_button = None
-                black_button.kill()
-                black_button = None
-                random_button.kill()
-                random_button = None
-                colour = "random"
+            elif event.ui_element == tutorial_skip:
+                tutorial_content1.kill()
+                tutorial_content1 = None
+                tutorial_continue1.kill()
+                tutorial_continue1 = None
+                tutorial_skip.kill()
+                tutorial_skip = None
                 begin_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, 0), (width, height-100)),
-                    text='',
+                    relative_rect=pygame.Rect((0, 0), (width, height - 100)),
+                    text='You are choosing white',
                     manager=manager,
                     anchors={'top': 'top',
                              'right': 'right',
                              'left': 'left'},
-                object_id= ObjectID(object_id='#begin_button')
+                    object_id=ObjectID(object_id='#begin_button')
                 )
                 cancel_button = pygame_gui.elements.UIButton(
                     relative_rect=pygame.Rect((0, -100), (width, 100)),
@@ -467,13 +633,13 @@ while True:
                 settings_button = None
                 gamemode = "local"
                 begin_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, 0), (width, height-100)),
+                    relative_rect=pygame.Rect((0, 0), (width, height - 100)),
                     text='',
                     manager=manager,
                     anchors={'top': 'top',
                              'right': 'right',
                              'left': 'left'},
-                object_id= ObjectID(object_id='#begin_button')
+                    object_id=ObjectID(object_id='#begin_button')
                 )
                 cancel_button = pygame_gui.elements.UIButton(
                     relative_rect=pygame.Rect((0, -100), (width, 100)),
@@ -494,7 +660,7 @@ while True:
                 settings_button.kill()
                 settings_button = None
                 Token_EntryLine = pygame_gui.elements.UITextEntryLine(
-                    relative_rect=pygame.Rect((0, -50), (width -100, 100)),
+                    relative_rect=pygame.Rect((0, -50), (width - 100, 100)),
                     placeholder_text=lichessToken,
                     manager=manager,
                     anchors={'center': 'center'}
@@ -519,36 +685,36 @@ while True:
                 confirmSettings_button.kill()
                 confirmSettings_button = None
                 player_vs_player_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, 0), (width/2, height/2)),
+                    relative_rect=pygame.Rect((0, 0), (width / 2, height / 2)),
                     text='Player vs Player',
                     manager=manager,
                     anchors={'left': 'left',
                              'top': 'top'},
-                    object_id= ObjectID(object_id='#pvp_button')
+                    object_id=ObjectID(object_id='#pvp_button')
                 )
                 player_vs_engine_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((-width/2, 0), (width/2, height/2)),
+                    relative_rect=pygame.Rect((-width / 2, 0), (width / 2, height / 2)),
                     text='Player vs Engine',
                     manager=manager,
                     anchors={'right': 'right',
                              'top': 'top'},
-                    object_id= ObjectID(object_id='#pve_button')
+                    object_id=ObjectID(object_id='#pve_button')
                 )
                 local_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((0, -height/2), (width/2, height/2)),
+                    relative_rect=pygame.Rect((0, -height / 2), (width / 2, height / 2)),
                     text='Local game',
                     manager=manager,
                     anchors={'left': 'left',
                              'bottom': 'bottom'},
-                    object_id= ObjectID(object_id='#local_button')
+                    object_id=ObjectID(object_id='#local_button')
                 )
                 settings_button = pygame_gui.elements.UIButton(
-                    relative_rect=pygame.Rect((-width/2, -height/2), (width/2, height/2)),
+                    relative_rect=pygame.Rect((-width / 2, -height / 2), (width / 2, height / 2)),
                     text='Settings',
                     manager=manager,
                     anchors={'right': 'right',
                              'bottom': 'bottom'},
-                    object_id= ObjectID(object_id='#settings_button')
+                    object_id=ObjectID(object_id='#settings_button')
                 )
             elif event.ui_element == begin_button:
                 begin_button.kill()
@@ -561,18 +727,24 @@ while True:
                     manager=manager,
                     anchors={'center': 'center'}
                 )
-                #board = chess.Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-                #svg = chess.svg.board(
+                # board = chess.Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+                # svg = chess.svg.board(
                 #    board
-                #)
+                # )
 
-                #svg2png(bytestring=svg,write_to='temp.png')
-                #image = pygame.image.load("temp.png")
-                print(gamemode)
-                print(engine)
-                print(colour)
-                print(opponentID)
-                print(lichessToken)
+                # svg2png(bytestring=svg,write_to='temp.png')
+                # image = pygame.image.load("temp.png")
+                print(engine, flush=True)
+                print(colour, flush=True)
+                # print(opponentID, flush=True)
+                # print(gamemode, flush=True)
+                # print(lichessToken, flush=True)
+
+                # sys.stdout.flush(gamemode)
+                # sys.stdout.flush(engine)
+                # sys.stdout.flush(colour)
+                # sys.stdout.flush(opponentID)
+                # sys.stdout.flush(lichessToken)
             elif event.ui_element == cancel_button:
                 begin_button.kill()
                 begin_button = None
@@ -601,7 +773,7 @@ while True:
 
     # Draw the UI
 
-    screen.fill((255,198,108))
-    if(logo != None): pygame.Surface.blit(screen,logo,(width/2-222, 50))
+    screen.fill((255, 198, 108))
+    if (logo != None): pygame.Surface.blit(screen, logo, (width / 2 - 222, 50))
     manager.draw_ui(screen)
     pygame.display.update()
